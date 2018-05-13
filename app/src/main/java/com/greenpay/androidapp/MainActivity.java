@@ -25,17 +25,23 @@ import java.util.List;
  */
 public class MainActivity extends AppCompatActivity
 {
-    ListView wifilist = null;
+    ListView wifilist = null; //a listview to display available stores
     TextView stateText; //a textview to display app state
-    BroadcastReceiver wifiReceiver;
+    BroadcastReceiver wifiReceiver; //a receiver to detect new WiFi networks
+    boolean wifiStateOriginal; //the original state of the WiFi (on/off)
+    WifiManager mainWiFi; //The object that controls the WiFi
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        wifilist = findViewById(R.id.wifilist); //listview to display WiFi networks
+        wifilist = findViewById(R.id.wifilist);
         stateText = findViewById(R.id.stateText);
-        final WifiManager mainWiFi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        //get the wifi service and initialize the wifi manager
+        mainWiFi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        //set the wifiStateOriginal to the current state
+        //to turn off WiFi when leaving the app, in case it was off
+        wifiStateOriginal = mainWiFi.isWifiEnabled();
         if (!mainWiFi.isWifiEnabled()) //if wifi is disabled, enabling wifi
         {
             stateText.setText("Enabling Wifi...");
@@ -45,10 +51,13 @@ public class MainActivity extends AppCompatActivity
         wifiReceiver = new BroadcastReceiver()
         {
             @Override
+            //this method is called every time a scan result is done
             public void onReceive(Context context, Intent intent)
             {
+                //check if the action was the wifi scan results
                 if (intent.getAction().equals(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION))
                 {
+                    //the list of the wifi networks
                     List<ScanResult> mScanResults = mainWiFi.getScanResults();
                     stateText.setText("Found " + mScanResults.size() + " wifi networks");
                     ArrayList <String> list = new ArrayList();
@@ -56,24 +65,45 @@ public class MainActivity extends AppCompatActivity
                     {
                         list.add(mScanResults.get(i).SSID);
                     }
+                    //add all the wifi networks to the listview
                     wifilist.setAdapter(new ArrayAdapter <String> (MainActivity.this,
                             android.R.layout.simple_list_item_1, list));
                     stateText.setText("wifi networks found");
                 }
             }
         };
+        //register the BroadcastReceiver
         registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        //a receiver for checking if the wifi state was changed
+        BroadcastReceiver onWifiStateChanged = new BroadcastReceiver()
+        {
+            @Override
+            public void onReceive(Context context, Intent intent)
+            {
+
+            }
+        };
+        //start the wifi scan
         mainWiFi.startScan();
         stateText.setText("Scanning WiFi");
     }
 
+
     protected void onPause() {
+        //stop scanning WiFi when leaving the app
         unregisterReceiver(wifiReceiver);
+        //if the WiFi was off before the app was opened, turn it off
+        if (!wifiStateOriginal)
+            mainWiFi.setWifiEnabled(false);
+        //stop the app
         super.onPause();
     }
 
     protected void onResume() {
         registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        wifiStateOriginal = mainWiFi.isWifiEnabled();
+        if (!wifiStateOriginal)
+            mainWiFi.setWifiEnabled(true);
         super.onResume();
     }
 }
