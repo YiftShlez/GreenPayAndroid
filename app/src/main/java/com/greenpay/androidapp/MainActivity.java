@@ -8,9 +8,11 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,9 +82,25 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onReceive(Context context, Intent intent)
             {
-
+                if (intent.getAction().equals(WifiManager.WIFI_STATE_CHANGED_ACTION))
+                {
+                    if (mainWiFi.isWifiEnabled()) //if WiFi was off and now is enabled
+                    {
+                        //register the receiver
+                        registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+                    }
+                    else //if wifi was on and now id disabled
+                    {
+                        //stop the receiver
+                        unregisterReceiver(wifiReceiver);
+                        //inform the user that the WiFi must be on
+                        Toast.makeText(context, "Service cannot work without WiFi", Toast.LENGTH_LONG).show();
+                        stateText.setText("WiFi is disabled");
+                    }
+                }
             }
         };
+        registerReceiver(onWifiStateChanged, new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION));
         //start the wifi scan
         mainWiFi.startScan();
         stateText.setText("Scanning WiFi");
@@ -100,10 +118,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     protected void onResume() {
+        //register the receiver back
         registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-        wifiStateOriginal = mainWiFi.isWifiEnabled();
+        mainWiFi.startScan(); //start a new scan
+        wifiStateOriginal = mainWiFi.isWifiEnabled(); //check if wifi is enabled
         if (!wifiStateOriginal)
-            mainWiFi.setWifiEnabled(true);
-        super.onResume();
+            mainWiFi.setWifiEnabled(true); //enabling wifi if it was disabled
+        super.onResume(); //resume the app
     }
 }
