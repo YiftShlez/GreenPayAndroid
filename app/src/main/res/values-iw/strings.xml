@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="point_camera">כוון את המכשיר אל הברקוד כדי לשלם</string>
+    <string name="camera_access_msg">לאפליקציה דרושה גישה למצלמה</string>
+    <string name="waiting_for_camera">ממתין לגישה למצלמה</string>
+    <string name="error">שגיאה</string>
+    <string name="give_camera_access">אפשר גישה למצלמה</string>
+</resources>

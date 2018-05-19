@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">GreenPay</string>
+    <string name="point_camera">Point your device at the QR code to pay</string>
+    <string name="camera_access_msg">Access to camera is required</string>
+    <string name="waiting_for_camera">Waiting for camera permission</string>
+    <string name="error">Error</string>
+    <string name="give_camera_access">Give Camera Access</string>
 </resources>
