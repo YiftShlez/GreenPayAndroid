@@ -5,4 +5,5 @@
     <string name="waiting_for_camera">Waiting for camera permission</string>
     <string name="error">Error</string>
     <string name="give_camera_access">Give Camera Access</string>
+    <string name="pay">Pay</string>
 </resources>

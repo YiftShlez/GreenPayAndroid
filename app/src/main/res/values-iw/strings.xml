@@ -5,4 +5,5 @@
     <string name="waiting_for_camera">ממתין לגישה למצלמה</string>
     <string name="error">שגיאה</string>
     <string name="give_camera_access">אפשר גישה למצלמה</string>
+    <string name="pay">Pay</string>
 </resources>
