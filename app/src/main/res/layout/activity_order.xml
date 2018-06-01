@@ -17,7 +17,8 @@
         android:text="@string/pay"
         android:textAlignment="center"
         android:textAllCaps="false"
-        android:textSize="26dp" />
+        android:textSize="26dp"
+        android:onClick="pay" />
 
     <ScrollView
         android:layout_width="match_parent"

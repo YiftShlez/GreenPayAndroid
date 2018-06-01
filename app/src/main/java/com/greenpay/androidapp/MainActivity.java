@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity
                                                         String storeName = order.getStoreName();
                                                         String storeCity = order.getStoreCity();
                                                         String storeEmail = order.getStoreEmail();
-                                                        int price = order.getPrice();
+                                                        double price = order.getPrice();
                                                         String content = order.getContent();
                                                         intent.putExtra("orderId", orderId);
                                                         intent.putExtra("storeId", storeId);
@@ -383,7 +383,7 @@ class ServerResultXmlParser
         String storeName = parser.getAttributeValue(null, "storeName");
         String storeCity = parser.getAttributeValue(null, "storeCity");
         String storeEmail = parser.getAttributeValue(null, "storeEmail");
-        int price = Integer.parseInt(parser.getAttributeValue(null, "price"));
+        double price = Double.parseDouble(parser.getAttributeValue(null, "price"));
         parser.next();
         String content = parser.getText();
         return new Order(orderId, storeId, storeName, storeCity, storeEmail, price, content);
@@ -417,10 +417,10 @@ class ServerResultXmlParser
         private String storeName;
         private String storeCity;
         private String storeEmail;
-        private int price;
+        private double price;
         private String content;
 
-        public Order(int orderId, int storeId, String storeName, String storeCity, String storeEmail, int price, String content)
+        public Order(int orderId, int storeId, String storeName, String storeCity, String storeEmail, double price, String content)
         {
             this.orderId = orderId;
             this.storeId = storeId;
@@ -461,7 +461,7 @@ class ServerResultXmlParser
             return storeEmail;
         }
 
-        public int getPrice()
+        public double getPrice()
         {
             return price;
         }
