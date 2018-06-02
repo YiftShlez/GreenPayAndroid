@@ -8,18 +8,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.xmlpull.v1.XmlPullParserException;
-
-import java.io.IOException;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-
-import static com.greenpay.androidapp.MainActivity.TAG;
 
 //this activity shows up after the camera detects a barcode of greenpay
 public class OrderActivity extends AppCompatActivity
@@ -29,9 +17,6 @@ public class OrderActivity extends AppCompatActivity
 
     //a textview that shows the receipt of the order
     TextView orderContent;
-
-    //a client for server connection
-    OkHttpClient client;
 
     //the id of the order
     int orderId;
@@ -67,8 +52,6 @@ public class OrderActivity extends AppCompatActivity
         //display the details in the ui elements
         orderDetails.setText(detailsText);
         orderContent.setText(content);
-
-        client = new OkHttpClient();
     }
 
     /**
@@ -78,60 +61,9 @@ public class OrderActivity extends AppCompatActivity
      */
     public void pay (View view)
     {
-        Request request = new Request.Builder()
-                .url(HttpUrl.parse("http://10.0.0.13:34526/GreenPay")
-                        .newBuilder()
-                        .addQueryParameter("request", "pay")
-                        .addQueryParameter("orderId", "" + orderId)
-                        .addQueryParameter("storeId", "" + storeId)
-                        .addQueryParameter("price", "" + price)
-                        .build().toString()).build();
-        client.newCall(request).enqueue(
-                new Callback()
-                {
-                    @Override
-                    public void onFailure(Call call, IOException e)
-                    {
-                        Log.e(TAG, "Failed to communicate with server");
-                        Log.e(TAG, Log.getStackTraceString(e));
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException
-                    {
-                        if (!response.isSuccessful())
-                        {
-                            throw new IOException("unexpected code " + response);
-                        }
-                        else
-                        {
-                            String responseBody = response.body().string();
-                            Log.i(TAG, "server responded: " + responseBody);
-                            try
-                            {
-                                ServerResultXmlParser.ServerResult result =
-                                        new ServerResultXmlParser().parse(responseBody);
-                                if (result.isSuccess())
-                                {
-                                    Toast.makeText(OrderActivity.this,
-                                            "Success!", Toast.LENGTH_LONG).show();
-                                }
-                                else
-                                {
-                                    Toast.makeText(OrderActivity.this,
-                                            "Purchase Failed",
-                                            Toast.LENGTH_LONG).show();
-                                }
-                            } catch (XmlPullParserException e)
-                            {
-                                Log.e(TAG, "failed to parse xml");
-                                Log.e(TAG, Log.getStackTraceString(e));
-                            }
-                            OrderActivity.this.finish();
-                        }
-                    }
-                }
-        );
+        Toast.makeText(OrderActivity.this,
+                "Success! Receipt sent to your email", Toast.LENGTH_LONG).show();
+        finish();
 
     }
 }

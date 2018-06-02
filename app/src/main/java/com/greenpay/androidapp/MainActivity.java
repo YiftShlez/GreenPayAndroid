@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity
                         String code = barcodeValue.split(":")[1];
                         //a http request to get barcode info
                         Request request = new Request.Builder().
-                                url(HttpUrl.parse("http://10.0.0.13:34526/GreenPay")
+                                url(HttpUrl.parse("http://192.168.43.18:34526/GreenPay")
                                         .newBuilder()
                                         .addQueryParameter("request", "checkbarcode")
                                         .addQueryParameter("barcode", code)
